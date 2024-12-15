@@ -5,16 +5,10 @@
 <p>For example, suppose we have the string <code>"Hello, World!"</code> and pass it into the <code>filtered_string_view</code> with the predicate function that returns true if the character is <code>'H'</code>, <code>'e'</code>, <code>'l'</code>, <code>'W'</code> or <code>'d'</code> but false otherwise. In this instance, the <code>filtered_string_view</code> will allows the viewing of the filtered string <code>"HellWld"</code> from the buffer.</p>
 
 <h2>Documentation</h2>
-<h3>1. Constructors</h3>
-----
 
-### 2.4. Constructors
+### 1. Constructors
 
-Note: It's very important your constructors work. If we can't validly construct your object, we can't validly test anything either.
-
-Hint: the minimum number of constructor prototypes (not including the copy & move constructors) you must write is three, not five (why this might be the case is left as an exercise to the reader).
-
-#### 2.4.1. Default Constructor
+#### 1.1. Default Constructor
 ```cpp
 filtered_string_view();
 ```
@@ -37,11 +31,6 @@ filtered_string_view(const std::string &str);
 ```
 
 Constructs a `filtered_string_view` with the pointer set to the string's underlying data, and the predicate set to the `true` predicate.
-
-Hint: you can obtain the underlying data of a `std::string` by calling `.data()` or `.c_str()`.
-
-Hint: This constructor should **not** be `explicit` because it's actually desirable to enable implicit conversions from `std::string` to `filtered_string_view`.
-
 
 ##### Examples
 
@@ -80,10 +69,6 @@ filtered_string_view(const char *str);
 
 Constructs a `filtered_string_view` with the pointer set to the given null-terminated string, and the predicate set to the `true` predicate.
 
-Hint: This constructor should be implicit because it's actually desirable to enable implicit conversions from `const char *` to `filtered_string_view`.
-
-Note: You can assume that the passed in string pointer is validly null-terminated (the final character in the string is `'\0'`).
-
 ##### Examples
 
 ```cpp
@@ -118,15 +103,6 @@ Output: `1`
 /* 2 */ filtered_string_view(filtered_string_view &&other);
 ```
 
-For (1) above (the copy constructor):
-- The newly constructed object must compare equal to the copied object.
-- A member-wise copy is sufficient.
-- The underlying character buffer should not be deep-copied.
-
-For (2) above (the move constructor):
-- The newly constructed object must be identical to the moved-from object before it was moved.
-- The moved from object should be in the same state as a default constructed `fsv::filtered_string_view`.
-
 ##### Examples
 
 ```cpp
@@ -151,12 +127,6 @@ assert(sv1.data() == nullptr); // true: sv1's guts were moved into `move`
 ----
 
 ### 2.5.1. Member Operators
-
-The table below intentionally omits the full signature of these operator overloads.
-You will need to figure out and complete these yourself.
-
-**Hint**: you may wish to review the [canonical operator overloading](https://en.cppreference.com/w/cpp/language/operators) reference and associated lecture material.
-
 #### 2.5.2. Copy Assignment
 
 ```cpp
@@ -199,8 +169,6 @@ assert(fsv1.size() == 0 && fsv1.data() == nullptr);
 auto operator[](int n) -> const char &;
 ```
 Allows reading a character from the **filtered string** given its index.
-
-Hint: Remember that the underlying string data should be read-only, and it should not be possible for clients of `filtered_string_view` to mutate it through the class.
  
 ##### Examples
 
@@ -217,7 +185,7 @@ Output: `0`
 explicit operator std::string();
 ```
 
-Enables type casting a `filtered_string_view` to a `std::string`. The returned `std::string` should be a copy of the filtered string, so any characters which are filtered out should not be present. The returned `std::string` must be a copy so that modifications to it do not mutate the underyling data backing the `filtered_string_view`.
+Enables type casting a `filtered_string_view` to a `std::string`. The returned `std::string` is a copy of the filtered string, so any characters which are filtered out should not be present. The returned `std::string` is a copy so that modifications to it do not mutate the underyling data backing the `filtered_string_view`.
 
 ##### Examples
 
@@ -251,9 +219,7 @@ Returns:
 
 Throws:
 - a `std::domain_error{"filtered_string_view::at(<index>): invalid index"}`, where `<index>` should be replaced with the actual index passed in if the index is invalid.
-
-Hint: Remember that the underlying string data should be read-only, and it should not be possible for clients of `filtered_string_view` to mutate it through the class.
-
+- 
 ##### Examples
 
 ```cpp
@@ -377,11 +343,6 @@ auto operator==(const filtered_string_view &lhs, const filtered_string_view &rhs
 Lexicographically compares two `filtered_string_view`s for equality.
 The predicate function *does not* participate in equality directly: only the two filtered strings should be lexicographically compared.
 
-When this operator is correctly implemented, it should be possible to use
-- `operator!=`
-
-without writing any extra code.
-
 ##### Examples
 
 ```cpp
@@ -402,14 +363,6 @@ auto operator<=>(const filtered_string_view &lhs, const filtered_string_view &rh
 
 Uses the C++20 spaceship operator to lexicographically compare two `filtered_string_view`s.
 The predicate function *does not* participate in comparison directly: only the two filtered strings should be lexicographically compared.
-
-When this operator is correctly implemented, it should be possible to use the other relational operators
-- `operator<`
-- `operator>`
-- `operator<=`
-- `operator>=`
-
-without writing any extra code.
 
 ##### Examples
 
@@ -490,9 +443,6 @@ If `tok` does not appear in `fsv`, returns a vector of a single element which is
 
 Similarly, if `fsv` is empty, returns a vector of a single element which is a copy of the original `fsv`.
 
-**Hint**: `split()` is intended to mirror the same semantics as Python3's `split()`. If you are unsure if you have implemented `split()` correctly, you can use `python3` to check your answer.
-- Note that Python's version of `split()` does not accept an empty delimiter, whereas `fsv::split()` does. Be careful with this.
-
 ##### Examples
 ```cpp
 auto interest = std::set<char>{'a', 'A', 'b', 'B', 'c', 'C', 'd', 'D', 'e', 'E', 'f', 'F', ' ', '/'};
@@ -530,7 +480,7 @@ auto substr(const filtered_string_view &fsv, int pos = 0, int count = 0) -> filt
 
 Returns a new `filtered_string_view` with the same underlying string as `fsv` which presents a "substring" view. The substring begins at `pos` and has length `rcount`, where `rcount = count <= 0 ? size() - pos() : count`. That is, it provides a view into the substring `[pos, pos + rcount)` of `fsv`.
 
-**Note**: it is possible to have a substring of length 0. In that case, the returned `filtered_string_view` should be equivalent to `""`.
+**Note**: it is possible to have a substring of length 0. In that case, the returns `filtered_string_view` equivalent to `""`.
 
 ##### Examples
 ```cpp
@@ -550,24 +500,7 @@ Output: `SD`
 
 ### 2.9. Iterator
 
-You must define an iterator for this class. Conceptually, the iterator allows callers to iterate through the filtered string character by character.
-
-You need to implement only a bidirectional `const_iterator` -- this means that even with a non-constant `filtered_string_view` it is impossible to mutate the underlying filtered_string. There are other examples of this kind of single-iterator class in the Standard Library, for example, [`std::set`](https://en.cppreference.com/w/cpp/container/set).
-
-Here are a few hints to defining your iterator correctly:
-- It should be tagged as a [bidirectional iterator](https://en.cppreference.com/w/cpp/named_req/BidirectionalIterator), and it should support all the operators that a bidirectional iterator would support.
-- The `value_type` should be `char`.
-- The `reference` type alias should be `const char &`.
-- The `pointer` type alias should be `void`.
-- It should have a public default constructor.
-- The iterator should not allow mutation into the underlying data.
-- We have provided part of the interface in the header file for you to start working from.
-
-You may also define private, implementation specific constructors.
-
-You may assume that any methods that mutate the original `filtered_string_view` invalidates any iterators. 
-
-Your main `filtered_string_view` class should have a member type alias `iterator = const_iterator`.
+A bidirectional `const_iterator` is implemented as the iterator for a filtered_string_view -- this means that even with a non-constant `filtered_string_view` it is impossible to mutate the underlying filtered_string.
 
 #### Examples
 ```cpp
@@ -602,7 +535,7 @@ Output: `as`
 
 ### 2.10. Range
 
-You are required to make a `filtered_string_view` be able to be used as a bidirectional range. This means that the standard `begin()`, `end()`, `cbegin()`, `cend()`, `rbegin()`, `rend()`, `crbegin()`, `crend()` suite of functions need to be implemented as member functions.
+A `filtered_string_view` is able to be used as a bidirectional range. This means that the standard `begin()`, `end()`, `cbegin()`, `cend()`, `rbegin()`, `rend()`, `crbegin()`, `crend()` suite of functions are implemented as member functions.
 
 Furthermore, the bidirectional range type members:
 - `iterator`
@@ -610,11 +543,7 @@ Furthermore, the bidirectional range type members:
 - `reverse_iterator`
 - `const_reverse_iterator`
 
-should be publically available.
-
-We have intentionally left off the return types for the the below functions. You will need to work out the correct number, const-correctness, and return types to ensure that all of the necessary overloads are present with the correct signatures.
-
-**Note**: when we say "iterator" below, it could refer to any one of the four above iterator type aliases.
+are publically available.
 
 ```cpp
 auto begin();
@@ -642,8 +571,6 @@ auto crend();
 ```
 
 Returns an iterator pointing one-past-the-end of the reversed filtered string, acting as a placeholder indicating there are no more characters to read.
-
-**Hint**: You should leverage the standard library to create the reverse iterators.
 
 #### Examples
 ```cpp
