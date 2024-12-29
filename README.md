@@ -6,9 +6,9 @@
 
 <h2>Documentation</h2>
 
-### 1. Constructors
+### 1.1 Constructors
 
-#### 1.1. Default Constructor
+#### 1.1.1 Default Constructor
 ```cpp
 filtered_string_view();
 ```
@@ -24,7 +24,7 @@ std::cout << sv.size() << std::endl;
 Output: `0`
 
 
-#### 2.4.2. Implicit String Constructor
+#### 1.1.2 Implicit String Constructor
 
 ```cpp
 filtered_string_view(const std::string &str);
@@ -42,7 +42,7 @@ std::cout << sv.size() << std::endl;
 
 Output: `3`
 
-#### 2.4.3. String Constructor with Predicate
+#### 1.1.3 String Constructor with Predicate
 
 ```cpp
 filtered_string_view(const std::string &str, filter predicate);
@@ -61,7 +61,7 @@ std::cout << sv.size() << std::endl;
 
 Output: `1`
 
-#### 2.4.4. Implicit Null-Terminated String Constructor
+#### 1.1.4 Implicit Null-Terminated String Constructor
 
 ```cpp
 filtered_string_view(const char *str);
@@ -78,7 +78,7 @@ std::cout << sv.size() << std::endl;
 
 Output: `3`
 
-#### 2.4.5. Null-Terminated String with Predicate Constructor
+#### 1.1.5 Null-Terminated String with Predicate Constructor
 
 ```cpp
 filtered_string_view(const char *str, filter predicate);
@@ -96,7 +96,7 @@ std::cout << sv.size();
 
 Output: `1`
 
-#### 2.4.6. Copy and Move Constructors
+#### 1.1.6 Copy and Move Constructors
 
 ```cpp
 /* 1 */ filtered_string_view(const filtered_string_view &other);
@@ -117,7 +117,7 @@ assert(sv1.data() == nullptr); // true: sv1's guts were moved into `move`
 
 ----
 
-### 2.5. Destructor
+### 1.2 Destructor
 ```cpp
 ~filtered_string_view();
 ```
